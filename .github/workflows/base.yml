@@ -1,5 +1,6 @@
 name: GitHub Actions Runner in Docker - Base
 on:
+  workflow_dispatch:
   push:
     paths:
       - Dockerfile.base
