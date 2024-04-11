@@ -3,41 +3,65 @@ Docker Github Actions Runner
 
 This will run the [new self-hosted github actions runners](https://help.github.com/en/actions/automating-your-workflow-with-github-actions/hosting-your-own-runners).
 
-## Quick-Start (Examples and Usage) ##
+## Quick-Start
+### Adding a self-hosted runner to an organization
+1. On GitHub.com, navigate to the main page of the organization.
+1. Under your organization name, click  Settings.
+1. In the left sidebar, click  Actions, then click Runners.
+1. Click New runner, then click New self-hosted runner.
+1. Note the token
 
-Please see [the wiki](https://github.com/terrateamio/self-hosted-runner/wiki/Usage)
+### Create your `docker-compose.yml`
+```yaml
+version: '2.3'
+services:
+  worker:
+    image: ghcr.io/terrateamio/self-hosted-runner:latest
+    restart: unless-stopped
+    environment:
+      ORG_NAME: myGithubOrg
+      RUNNER_NAME: terrateam-self-hosted
+      RUNNER_TOKEN: runnerToken
+      RUNNER_WORKDIR: /tmp/runner/work
+      RUNNER_SCOPE: 'org'
+      LABELS: terrateam-self-hosted
+      EPHEMERAL: 1
+    security_opt:
+      - label:disable # needed on SELinux systems to allow docker container to manage other docker containers
+    volumes:
+      - '/var/run/docker.sock:/var/run/docker.sock'
+      - '/tmp/runner:/tmp/runner' # docker-in-docker requires the same path on the host and inside the container
+```
 
-## Notes ##
+### Update your Terrateam GitHub Actions workflow file
+Replace `ubuntu-latest` with `terrateam-self-hosted`:
+```
+bender@nibbler:~/terrateam-demo/terraform$ git diff .github/workflows/terrateam.yml
+diff --git a/.github/workflows/terrateam.yml b/.github/workflows/terrateam.yml
+index 1f77912..2eb8f5f 100644
+--- a/.github/workflows/terrateam.yml
++++ b/.github/workflows/terrateam.yml
+@@ -24,7 +24,7 @@ jobs:
+     permissions: # Required to pass credentials to the Terrateam action
+         id-token: write
+         contents: read
+-    runs-on: ubuntu-latest
++    runs-on: terrateam-self-hosted
+     timeout-minutes: 1440
+     name: Terrateam Action
+     steps:
+bender@nibbler:~/terrateam-demo/terraform$
+```
 
-### Security ###
+Commit and push to your `default branch`.
 
-It is known that environment variables are not safe from exfiltration.
-If you are using this runner make sure that any workflow changes are gated by a verification process (in the actions settings) so that malicious PR's cannot exfiltrate these.
+### Run Docker Compose
+```sh
+docker-compose up -d
+```
 
-### Docker Support ###
-
-Please note that while this runner installs and allows docker, github actions itself does not support using docker from a self hosted runner yet.
-For more information:
-
-* https://github.com/actions/runner/issues/406
-* https://github.com/actions/runner/issues/367
-
-### Containerd Support ###
-
-Currently runners [do not support containerd](https://github.com/actions/runner/issues/1265)
-
-## Docker Artifacts ##
-
-| Container Base | Supported Architectures | Tag Regex | Docker Tags | Description | Notes |
-| --- | --- | --- | --- | --- | --- |
-| ubuntu focal | `x86_64`,`arm64` | `/\d\.\d{3}\.\d+/` `/\d\.\d{3}\.\d+-ubuntu-focal/`| [latest](https://hub.docker.com/r/terrateamio/self-hosted-runner/tags?page=1&name=latest) [ubuntu-focal](https://hub.docker.com/r/terrateamio/self-hosted-runner/tags?page=1&name=ubuntu-focal) | This is the latest build (Rebuilt nightly and on master merges). Tags without an OS name are included. Tags with `-ubuntu-focal` are included and created on [upstream tags](https://github.com/actions/runner/tags).|
-| ubuntu jammy | `x86_64`,`arm64` | `/\d\.\d{3}\.\d+-ubuntu-jammy/` | [ubuntu-jammy](https://hub.docker.com/r/terrateamio/self-hosted-runner/tags?page=1&name=ubuntu-jammy) | This is the latest build from jammy (Rebuilt nightly and on master merges). Tags with `-ubuntu-jammy` are included and created on [upstream tags](https://github.com/actions/runner/tags). | There is [currently an issue with jammy from inside a 20.04LTS host](https://github.com/terrateamio/self-hosted-runner/issues/219) which is why this is not `latest` |
-| ubuntu bionic | `x86_64`,`arm64` | `/\d\.\d{3}\.\d+-ubuntu-bionic/` | [ubuntu-bionic](https://hub.docker.com/r/terrateamio/self-hosted-runner/tags?page=1&name=ubuntu-bionic) | This is the latest build from bionic (Rebuilt nightly and on master merges). Tags with `-ubuntu-bionic` are included and created on [upstream tags](https://github.com/actions/runner/tags). | |
-| debian buster (now deprecated) | `x86_64`,`arm64` |  `/\d\.\d{3}\.\d+-debian-buster/` | [debian-buster](https://hub.docker.com/r/terrateamio/self-hosted-runner/tags?page=1&name=debian-buster) | Debian buster is now deprecated. The packages for arm v7 are in flux and are wildly causing build failures (git as well as apt-key and liblttng-ust#. Tags with `-debian-buster` are included and created on [upstream tags](https://github.com/actions/runner/tags). | |
-| debian bullseye | `x86_64`,`arm64` |  `/\d\.\d{3}\.\d+-debian-bullseye/` | [debian-bullseye](https://hub.docker.com/r/terrateamio/self-hosted-runner/tags?page=1&name=debian-bullseye) | This is the latest build from bullseye (Rebuilt nightly and on master merges). Tags with `-debian-bullseye` are included and created on [upstream tags](https://github.com/actions/runner/tags). | |
-| debian sid | `x86_64`,`arm64` |  `/\d\.\d{3}\.\d+-debian-sid/` | [debian-sid](https://hub.docker.com/r/terrateamio/self-hosted-runner/tags?page=1&name=debian-sid) | This is the latest build from sid (Rebuilt nightly and on master merges). Tags with `-debian-sid` are included and created on [upstream tags](https://github.com/actions/runner/tags). | |
-
-These containers are built via Github actions that [copy the dockerfile](https://github.com/terrateamio/self-hosted-runner/blob/master/.github/workflows/deploy.yml#L47), changing the `FROM` and building to provide simplicity.
+### Run a Terrateam operation
+Validate the job is running on your self-hosted runner by running `docker-compose logs -f`.
 
 ## Environment Variables ##
 
