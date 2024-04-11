@@ -42,7 +42,7 @@ jobs:
           file: Dockerfile
           pull: true
           push: true
-          tags: ${{ env.ORG }}/github-runner:latest,ghcr.io/${{ github.repository }}:latest
+          tags: ghcr.io/${{ env.ORG }}/self-hosted--runner:latest,ghcr.io/${{ github.repository }}:latest
           platforms: linux/amd64,linux/arm64
           cache-from: type=gha
           cache-to: type=gha,mode=max
@@ -77,7 +77,7 @@ jobs:
           file: Dockerfile.ubuntu-${{ matrix.release }}
           pull: true
           push: true
-          tags: ${{env.ORG}}/github-runner:ubuntu-${{ matrix.release }},ghcr.io/${{ github.repository }}:ubuntu-${{ matrix.release }}
+          tags: ghcr.io/${{env.ORG}}/self-hosted-runner:ubuntu-${{ matrix.release }},ghcr.io/${{ github.repository }}:ubuntu-${{ matrix.release }}
           platforms: linux/amd64,linux/arm64
           cache-from: type=gha
           cache-to: type=gha,mode=max
@@ -112,7 +112,7 @@ jobs:
           file: Dockerfile.debian-${{ matrix.release }}
           pull: true
           push: true
-          tags: ${{ env.ORG }}/github-runner:debian-${{ matrix.release }},ghcr.io/${{ github.repository }}:debian-${{ matrix.release }}
+          tags: ghcr.io/${{ env.ORG }}/self-hosted-runner:debian-${{ matrix.release }},ghcr.io/${{ github.repository }}:debian-${{ matrix.release }}
           platforms: linux/amd64,linux/arm64
           cache-from: type=gha
           cache-to: type=gha,mode=max
