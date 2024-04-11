@@ -1,5 +1,5 @@
 # hadolint ignore=DL3007
-FROM terrateamio/self-hosted-runner-base:latest
+FROM ghcr.io/terrateamio/self-hosted-runner-base:latest
 LABEL maintainer="hello@terrateam.io"
 
 ENV AGENT_TOOLSDIRECTORY=/opt/hostedtoolcache
