@@ -1,5 +1,5 @@
 FROM ubuntu:focal
-LABEL maintainer="myoung34@my.apsu.edu"
+LABEL maintainer="hello@terrateam.io"
 
 ARG DUMB_INIT_VERSION="1.2.2"
 ARG GIT_CORE_PPA_KEY="A1715D88E1DF1F24"
