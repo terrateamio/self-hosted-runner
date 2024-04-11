@@ -1,6 +1,11 @@
 #!/usr/bin/dumb-init /bin/bash
 # shellcheck shell=bash
 
+# Clean up workdir on start
+if [ -d "${RUNNER_WORKDIR}" ]; then
+  find "${RUNNER_WORKDIR}" -mindepth 1 -delete
+fi
+
 export RUNNER_ALLOW_RUNASROOT=1
 export PATH=${PATH}:/actions-runner
 
