@@ -1,0 +1,18 @@
+version: '2.3'
+services:
+  worker:
+    image: ghcr.io/terrateamio/self-hosted-runner:latest
+    restart: unless-stopped
+    environment:
+      ORG_NAME: myOrgName
+      RUNNER_NAME: terrateam-self-hosted
+      RUNNER_TOKEN: myRunnerToken
+      RUNNER_WORKDIR: /tmp/runner/work
+      RUNNER_SCOPE: 'org'
+      LABELS: terrateam-self-hosted
+      DISABLE_AUTOMATIC_DEREGISTRATION: TRUE
+    security_opt:
+      - label:disable # needed on SELinux systems to allow docker container to manage other docker containers
+    volumes:
+      - '/var/run/docker.sock:/var/run/docker.sock'
+      - '/tmp/runner:/tmp/runner' # docker-in-docker requires the same path on the host and inside the container
