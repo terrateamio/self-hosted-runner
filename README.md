@@ -10,28 +10,7 @@ This will run the [new self-hosted github actions runners](https://help.github.c
 1. In the left sidebar, click  Actions, then click Runners.
 1. Click New runner, then click New self-hosted runner.
 1. Note the token
-
-### Create your `docker-compose.yml`
-```yaml
-version: '2.3'
-services:
-  worker:
-    image: ghcr.io/terrateamio/self-hosted-runner:latest
-    restart: unless-stopped
-    environment:
-      ORG_NAME: myGithubOrg
-      RUNNER_NAME: terrateam-self-hosted
-      RUNNER_TOKEN: runnerToken
-      RUNNER_WORKDIR: /tmp/runner/work
-      RUNNER_SCOPE: 'org'
-      LABELS: terrateam-self-hosted
-      EPHEMERAL: 1
-    security_opt:
-      - label:disable # needed on SELinux systems to allow docker container to manage other docker containers
-    volumes:
-      - '/var/run/docker.sock:/var/run/docker.sock'
-      - '/tmp/runner:/tmp/runner' # docker-in-docker requires the same path on the host and inside the container
-```
+1. Update [docker-compose.yml](docker-compose.yml) with your `ORG_NAME` and `RUNNER_TOKEN`
 
 ### Update your Terrateam GitHub Actions workflow file
 Replace `ubuntu-latest` with `terrateam-self-hosted`:
