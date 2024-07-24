@@ -10,7 +10,7 @@ services:
       RUNNER_WORKDIR: /tmp/runner/work
       RUNNER_SCOPE: 'org'
       LABELS: terrateam-self-hosted
-      DISABLE_AUTOMATIC_DEREGISTRATION: TRUE
+      DISABLE_AUTOMATIC_DEREGISTRATION: 'TRUE'
     security_opt:
       - label:disable # needed on SELinux systems to allow docker container to manage other docker containers
     volumes:
