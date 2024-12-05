@@ -4,7 +4,7 @@ LABEL maintainer="hello@terrateam.io"
 ENV AGENT_TOOLSDIRECTORY=/opt/hostedtoolcache
 RUN mkdir -p /opt/hostedtoolcache
 
-ARG GH_RUNNER_VERSION="2.319.1"
+ARG GH_RUNNER_VERSION="2.321.0"
 
 ARG TARGETPLATFORM
 
