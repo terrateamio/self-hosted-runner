@@ -4,9 +4,8 @@ LABEL maintainer="hello@terrateam.io"
 ENV AGENT_TOOLSDIRECTORY=/opt/hostedtoolcache
 RUN mkdir -p /opt/hostedtoolcache
 
-ARG GH_RUNNER_VERSION="2.321.0"
-
 ARG TARGETPLATFORM
+ARG GH_RUNNER_VERSION
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
