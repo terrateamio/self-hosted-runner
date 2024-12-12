@@ -52,7 +52,7 @@ jobs:
           push: true
           tags: ghcr.io/terrateamio/self-hosted-runner:latest
           platforms: linux/amd64,linux/arm64
-          build-args:
-            GH_RUNNER_VERSION: ${{ env.runner_version }}
+          build-args: |
+            GH_RUNNER_VERSION=${{ env.runner_version }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
