@@ -2,6 +2,7 @@ version: '2.3'
 services:
   worker:
     image: ghcr.io/terrateamio/self-hosted-runner:latest
+    pull_policy: always
     restart: unless-stopped
     environment:
       ORG_NAME: myOrgName
